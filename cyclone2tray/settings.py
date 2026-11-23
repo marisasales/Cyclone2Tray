@@ -5,7 +5,8 @@ import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-APP_NAME = "CycloneTray"
+APP_NAME = "Cyclone2Tray"
+LEGACY_APP_NAME = "CycloneTray"
 
 
 @dataclass
@@ -36,13 +37,19 @@ def settings_path() -> Path:
     return Path(root) / APP_NAME / "settings.json"
 
 
+def _legacy_settings_path() -> Path:
+    root = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
+    return Path(root) / LEGACY_APP_NAME / "settings.json"
+
+
 def load_settings() -> Settings:
-    path = settings_path()
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        return Settings(**{k: v for k, v in data.items() if k in Settings.__annotations__})
-    except (OSError, ValueError, TypeError):
-        return Settings()
+    for path in (settings_path(), _legacy_settings_path()):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return Settings(**{k: v for k, v in data.items() if k in Settings.__annotations__})
+        except (OSError, ValueError, TypeError):
+            continue
+    return Settings()
 
 
 def save_settings(settings: Settings) -> None:
@@ -62,7 +69,10 @@ def get_start_with_windows() -> bool:
         import winreg
 
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, RUN_KEY) as key:
-            return bool(winreg.QueryValueEx(key, APP_NAME)[0])
+            try:
+                return bool(winreg.QueryValueEx(key, APP_NAME)[0])
+            except FileNotFoundError:
+                return bool(winreg.QueryValueEx(key, LEGACY_APP_NAME)[0])
     except OSError:
         return False
 
@@ -78,7 +88,11 @@ def set_start_with_windows(enabled: bool) -> None:
                 script = Path(__file__).resolve().parents[1] / "run_tray.py"
                 command = f'"{sys.executable}" "{script}"'
                 winreg.SetValueEx(key, APP_NAME, 0, winreg.REG_SZ, command)
-            else:
-                winreg.DeleteValue(key, APP_NAME)
+            for name in (APP_NAME, LEGACY_APP_NAME):
+                try:
+                    if not enabled or name == LEGACY_APP_NAME:
+                        winreg.DeleteValue(key, name)
+                except FileNotFoundError:
+                    pass
     except OSError:
         pass

@@ -1,6 +1,6 @@
 """Ponto de entrada do monitor na bandeja."""
 
-from cyclonetray.tray import TrayController
+from cyclone2tray.tray import TrayController
 
 
 def main() -> None:

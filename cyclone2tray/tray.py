@@ -203,7 +203,7 @@ class TrayController:
 
         shown = self.settings.last_percent
         self.icon = pystray.Icon(
-            "CycloneTray",
+            "Cyclone2Tray",
             battery_image(shown, False, self.settings.alert_percent, connected=False),
             self._title(shown),
             self.build_menu(),
