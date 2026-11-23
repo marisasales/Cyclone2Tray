@@ -15,18 +15,22 @@ from .settings import (
     set_start_with_windows,
 )
 
-GREEN = (22, 163, 74, 255)
-AMBER = (224, 138, 0, 255)
-RED = (220, 38, 38, 255)
-FG = (255, 255, 255, 255)
-MUTED = (170, 170, 170, 255)
+GREEN = (72, 255, 112, 255)
+AMBER = (255, 190, 48, 255)
+RED = (255, 82, 82, 255)
+MUTED = (174, 184, 198, 255)
+TEXT = (18, 22, 29, 255)
 
 
 def _font(size: int):
+    bold_font = r"C:\Windows\Fonts\segoeuib.ttf"
     try:
-        return ImageFont.load_default(size=size)
-    except TypeError:
-        return ImageFont.load_default()
+        return ImageFont.truetype(bold_font, size=size)
+    except OSError:
+        try:
+            return ImageFont.load_default(size=size)
+        except TypeError:
+            return ImageFont.load_default()
 
 
 def level_color(percent: int, alert: int) -> tuple[int, int, int, int]:
@@ -37,32 +41,29 @@ def level_color(percent: int, alert: int) -> tuple[int, int, int, int]:
     return GREEN
 
 
-def icon_image(percent: int | None, charging: bool, alert: int) -> Image.Image:
-    s = 64
-    img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+def battery_image(
+    percent: int | None,
+    charging: bool,
+    alert: int,
+    connected: bool = True,
+) -> Image.Image:
+    # Material Symbols Rounded-style horizontal battery, composed at 64px so
+    # Windows can downsample it cleanly for the notification area.
+    img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
+    known = percent is not None
+    shown = min(100, max(0, percent or 0))
+    color = level_color(shown, alert) if known and connected else MUTED
 
-    if percent is None:
-        d.rounded_rectangle((5, 18, 50, 46), radius=7, outline=MUTED, width=4)
-        d.rectangle((53, 27, 58, 37), fill=MUTED)
-        d.line((15, 32, 40, 32), fill=MUTED, width=4)
-        return img
-
-    color = level_color(percent, alert)
-    d.rounded_rectangle((4, 13, 52, 51), radius=8, outline=FG, width=4)
-    d.rounded_rectangle((55, 25, 61, 39), radius=2, fill=FG)
-    fill_w = max(3, int(43 * min(100, max(0, percent)) / 100))
-    d.rounded_rectangle((8, 17, 8 + fill_w, 47), radius=3, fill=color)
-
-    if charging:
-        d.polygon([(34, 17), (20, 36), (30, 36), (27, 49), (44, 29), (34, 29)], fill=GREEN)
-    else:
-        label = str(percent)
-        font = _font(27 if len(label) < 3 else 22)
-        box = d.textbbox((0, 0), label, font=font)
-        x = 28 - (box[2] - box[0]) / 2
-        y = 32 - (box[3] - box[1]) / 2 - 2
-        d.text((x, y), label, font=font, fill=FG)
+    d.rounded_rectangle((2, 11, 55, 53), radius=10, fill=color, outline=TEXT, width=2)
+    terminal_color = GREEN if charging and connected else color
+    d.rounded_rectangle((56, 22, 63, 42), radius=4, fill=terminal_color, outline=TEXT, width=2)
+    label = str(shown) if known else "--"
+    font = _font(28 if len(label) <= 2 else 30)
+    box = d.textbbox((0, 0), label, font=font)
+    x = (55 - (box[2] - box[0])) / 2 + 2 - box[0]
+    y = (64 - (box[3] - box[1])) / 2 - box[1]
+    d.text((x, y), label, font=font, fill=TEXT)
     return img
 
 
@@ -110,8 +111,12 @@ class TrayController:
         if self.icon is None:
             return
         shown = self.status.percent if self.status.connected else self.settings.last_percent
-        self.icon.icon = icon_image(shown, bool(self.status.charging and self.status.connected),
-                                    self.settings.alert_percent)
+        self.icon.icon = battery_image(
+            shown,
+            bool(self.status.charging and self.status.connected),
+            self.settings.alert_percent,
+            connected=self.status.connected,
+        )
         self.icon.title = self._title(shown)
 
     def _title(self, shown: int | None) -> str:
@@ -186,7 +191,7 @@ class TrayController:
         shown = self.settings.last_percent
         self.icon = pystray.Icon(
             "CycloneTray",
-            icon_image(shown, False, self.settings.alert_percent),
+            battery_image(shown, False, self.settings.alert_percent, connected=False),
             self._title(shown),
             self.build_menu(),
         )

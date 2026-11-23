@@ -16,7 +16,7 @@ A implementação usa apenas leitura do relatório + keep-alive. **Não envia co
 1. Feche o **GameSir Connect** (ele pode manter o handle HID ocupado).
 2. Conecte o dongle, ligue o controle e confirme o modo **XInput / LED verde**.
 3. Rode `Diagnóstico.bat`. Ele lista as coleções HID e mostra qual responde com bateria.
-4. Se aparecer `BATERIA: NN%`, rode `Iniciar monitor.bat`. O ícone aparece na bandeja (eventualmente na área de overflow `^`).
+4. Se aparecer `BATERIA: NN%`, rode `Iniciar monitor.bat`. Um ícone de bateria com a porcentagem aparece na bandeja (eventualmente na área de overflow `^`).
 
 O monitor procura o dispositivo automaticamente na inicialização; o `Diagnóstico.bat --save` fixa a coleção encontrada em `settings.json` para acelerar esse passo.
 
