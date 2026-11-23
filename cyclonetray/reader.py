@@ -99,7 +99,7 @@ class BatteryReader:
     def _run(self) -> None:
         while not self._stop.is_set():
             self._rediscover.clear()
-            self._publish(connected=False, last_error="", device="")
+            self._publish(connected=False, last_error="")
             found = self._discover()
             if found is None:
                 self._publish(last_error="Controle não encontrado no dongle (modo XInput).")
@@ -109,7 +109,7 @@ class BatteryReader:
 
             candidate, battery = found
             self.saved_path = candidate.path
-            self._apply(battery, candidate.label)
+            self._apply(battery, self._mode_name(candidate))
             try:
                 self._stream(candidate)
             except Exception as exc:
@@ -140,7 +140,7 @@ class BatteryReader:
                 if battery is None:
                     continue
                 last_report = now
-                self._apply(battery, candidate.label)
+                self._apply(battery, self._mode_name(candidate))
         finally:
             try:
                 device.close()
@@ -158,3 +158,7 @@ class BatteryReader:
             raw_percent=battery.raw_percent,
             raw_status=battery.raw_status,
         )
+
+    @staticmethod
+    def _mode_name(candidate) -> str:
+        return candidate.product.strip() or "GameSir Cyclone 2"

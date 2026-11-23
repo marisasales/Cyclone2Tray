@@ -77,6 +77,7 @@ class TrayController:
         self.critical_alerted = False
 
     def _on_update(self, status: BatteryStatus) -> None:
+        menu_before = self._menu_signature(self.status)
         self.status = status
         if status.percent is not None and status.connected:
             self.settings.last_percent = status.percent
@@ -86,6 +87,19 @@ class TrayController:
         save_settings(self.settings)
         self._check_alerts(status)
         self._paint()
+        if menu_before != self._menu_signature(status):
+            self._update_menu()
+
+    @staticmethod
+    def _menu_signature(status: BatteryStatus) -> tuple:
+        return (status.percent, status.charging, status.connected, status.device)
+
+    def _update_menu(self) -> None:
+        if self.icon is not None:
+            try:
+                self.icon.update_menu()
+            except Exception:
+                pass
 
     def _check_alerts(self, status: BatteryStatus) -> None:
         if status.percent is None or not status.connected:
@@ -139,10 +153,8 @@ class TrayController:
     def _detail_text(self) -> str:
         s = self.status
         if s.connected:
-            return f"Dongle conectado · {s.device}"
-        if s.last_error:
-            return s.last_error
-        return "Ligue o controle no modo 2.4 GHz / XInput"
+            return f"Dongle conectado · {s.device}" if s.device else "Dongle conectado"
+        return f"Dongle desconectado · {s.device}" if s.device else "Dongle desconectado"
 
     def _set_alert(self, percent: int):
         def action(_icon, _item):
@@ -157,14 +169,15 @@ class TrayController:
 
     def _toggle_startup(self, _icon, _item) -> None:
         set_start_with_windows(not get_start_with_windows())
-        self.icon.update_menu()
+        self._update_menu()
 
     def _refresh(self, _icon, _item) -> None:
         self.reader.rediscover()
 
     def _exit(self, _icon, _item) -> None:
         self.reader.stop()
-        self.icon.stop()
+        if self.icon is not None:
+            self.icon.stop()
 
     def build_menu(self):
         from pystray import Menu, MenuItem
