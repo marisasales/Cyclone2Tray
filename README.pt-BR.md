@@ -72,6 +72,14 @@ Não é necessário instalar o .NET SDK nem compilar uma extensão nativa.
 
 O ícone pode ficar na área de ícones ocultos da bandeja. Clique na seta `^` ao lado do relógio para encontrá-lo.
 
+## Privacidade e dados
+
+- O aplicativo não envia telemetria nem faz requisições pela rede.
+- Ele lê apenas os relatórios HID do Cyclone 2 e envia o keep-alive `0F F2`.
+- As preferências ficam em `%LOCALAPPDATA%\Cyclone2Tray\settings.json`.
+- Quando ativado, o aplicativo grava o comando de inicialização em `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
+- Nenhuma senha, token ou outra credencial é armazenada pelo aplicativo.
+
 ## Usar o menu da bandeja
 
 Clique com o botão direito no ícone para consultar o estado e:

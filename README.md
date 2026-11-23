@@ -72,6 +72,14 @@ No .NET SDK or native extension compiler is required.
 
 Windows may place the icon in the hidden notification area. Click the `^` arrow next to the clock to find it.
 
+## Privacy and data
+
+- The application does not send telemetry or make network requests.
+- It reads only the Cyclone 2 HID reports and sends the `0F F2` keep-alive.
+- It stores preferences under `%LOCALAPPDATA%\Cyclone2Tray\settings.json`.
+- It optionally writes the startup command under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
+- No passwords, tokens, or other credentials are stored by the application.
+
 ## Tray menu
 
 Right-click the icon to see the current status and use these menu items:
