@@ -16,7 +16,6 @@ class Settings:
     last_percent: int | None = None
     last_read_at: str | None = None
     device_path_hex: str | None = None
-    heartbeat_enabled: bool = True
 
     @property
     def device_path(self) -> bytes | None:
@@ -32,14 +31,17 @@ class Settings:
         self.device_path_hex = value.hex() if value else None
 
 
-def settings_path() -> Path:
+def _local_app_data() -> Path:
     root = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
-    return Path(root) / APP_NAME / "settings.json"
+    return Path(root)
+
+
+def settings_path() -> Path:
+    return _local_app_data() / APP_NAME / "settings.json"
 
 
 def _legacy_settings_path() -> Path:
-    root = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
-    return Path(root) / LEGACY_APP_NAME / "settings.json"
+    return _local_app_data() / LEGACY_APP_NAME / "settings.json"
 
 
 def load_settings() -> Settings:
