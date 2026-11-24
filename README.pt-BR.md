@@ -1,4 +1,15 @@
-# Cyclone2Tray
+<h1 align="center">Cyclone2Tray</h1>
+
+<p align="center">
+  <img src="assets/app.png" alt="Ícone do Cyclone2Tray" title="Monitor portátil de bateria Cyclone2Tray" width="180">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Versão 0.1.0" title="Versão do Cyclone2Tray: 0.1.0">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB" alt="Python 3.10+" title="Requer Python 3.10 ou mais recente; testado com 3.15.2">
+  <img src="https://img.shields.io/badge/platform-Windows%2011-0078D4" alt="Windows 11" title="Validado no Windows 11">
+  <img src="https://img.shields.io/badge/controller-GameSir%20Cyclone%202-333333" alt="GameSir Cyclone 2" title="Projetado para o GameSir Cyclone 2 pelo dongle 2,4 GHz">
+</p>
 
 **Idioma:** Português | [English](README.md)
 
@@ -10,9 +21,10 @@ Monitor não oficial da bateria do **GameSir Cyclone 2** na área de notificaç�
 - Indica quando o controle está carregando e quando está desconectado.
 - Avisa quando a bateria chega ao limite configurado.
 - Redescobre o controle quando necessário e pode iniciar com o Windows.
+- Oferece interface em inglês (padrão), português e espanhol; a escolha fica salva.
 - Inclui um utilitário para inspecionar as interfaces e relatórios HID.
 
-O foco é o **Cyclone 2 conectado pelo dongle no modo XInput**. Outros modelos, modos de conexão e sistemas operacionais não foram validados. Este repositório não distribui um executável `.exe`: a aplicação roda com Python.
+O foco é o **Cyclone 2 conectado pelo dongle no modo XInput**. Outros modelos, modos de conexão e sistemas operacionais não foram validados. O código-fonte roda com Python; o pacote portátil para Windows já inclui seu próprio runtime Python.
 
 ## Como funciona
 
@@ -34,7 +46,7 @@ Esse mapeamento foi confirmado em Windows 11 com o Cyclone 2 e firmware 1.13 (VI
 
 - Windows 11.
 - GameSir Cyclone 2 e dongle 2,4 GHz, com o controle ligado no modo XInput (LED verde).
-- Python 3.10 ou mais recente. Validado com Python 3.15.2.
+- Python 3.10 ou mais recente para rodar pelo código-fonte ou gerar o pacote. Validado com Python 3.15.2.
 - O arquivo `vendor/hidapi.dll`, já incluído no repositório.
 
 Não é necessário instalar o .NET SDK nem compilar uma extensão nativa.
@@ -72,6 +84,19 @@ Não é necessário instalar o .NET SDK nem compilar uma extensão nativa.
 
 O ícone pode ficar na área de ícones ocultos da bandeja. Clique na seta `^` ao lado do relógio para encontrá-lo.
 
+## Criar pacotes para Windows
+
+Na pasta raiz do projeto, no Windows, instale as dependências do aplicativo e da compilação:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-build.txt
+.\build.bat
+```
+
+Coloque a imagem do ícone do EXE em `assets\app.png`; o build a converte automaticamente para um ícone Windows em vários tamanhos.
+
+O build gera `dist\Cyclone2Tray-portable.zip`. Extraia o arquivo e execute `Cyclone2Tray.exe`; mantenha a pasta `Cyclone2Tray` inteira, pois ela contém o runtime Python, a `hidapi.dll` e sua licença. Não é necessário instalar o aplicativo nem aprovar acesso de administrador. O programa empacotado não precisa de Python nem do SDK do .NET.
+
 ## Privacidade e dados
 
 - O aplicativo não envia telemetria nem faz requisições pela rede.
@@ -82,12 +107,13 @@ O ícone pode ficar na área de ícones ocultos da bandeja. Clique na seta `^` a
 
 ## Usar o menu da bandeja
 
-Clique com o botão direito no ícone para consultar o estado e:
+O idioma padrão da interface é inglês. Clique com o botão direito no ícone para consultar a bateria, os detalhes da conexão e a versão do app:
 
-- **Atualizar agora**: procurar o dispositivo novamente.
-- **Alerta em**: escolher 10%, 15%, 20%, 25% ou 30% (padrão: 20%; alerta crítico: 10%).
-- **Iniciar com Windows**: habilitar ou desabilitar a inicialização automática do usuário atual.
-- **Sair**: encerrar o monitor.
+- **Refresh now / Atualizar agora**: procurar o dispositivo novamente.
+- **Alert at / Alerta em**: escolher 10%, 15%, 20%, 25% ou 30% (padrão: 20%; alerta crítico: 10%).
+- **Start with Windows / Iniciar com Windows**: habilitar ou desabilitar a inicialização automática do usuário atual.
+- **Language / Idioma**: escolher English (padrão), Português ou Español; a escolha fica salva nas configurações.
+- **Exit / Sair**: encerrar o monitor.
 
 Os alertas são reiniciados quando o controle começa a carregar ou quando a carga sobe pelo menos 5 pontos acima do limite. As configurações ficam em `%LOCALAPPDATA%\Cyclone2Tray\settings.json`; configurações antigas em `%LOCALAPPDATA%\CycloneTray\settings.json` são lidas como fallback. A inicialização automática usa a chave `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
 
@@ -122,6 +148,7 @@ Em `--watch`, os bytes 35 e 36 são impressos em inglês quando mudam. Se o cont
 - `probe.py`: ferramenta de diagnóstico.
 - `vendor/hidapi.dll`: biblioteca HID para Windows.
 - `diagnostics.bat` e `start-monitor.bat`: atalhos de diagnóstico e execução.
+- `build.bat`: script para gerar o pacote portátil no Windows.
 
 ## Créditos e referências
 

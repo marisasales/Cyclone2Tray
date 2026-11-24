@@ -1,4 +1,15 @@
-# Cyclone2Tray
+<h1 align="center">Cyclone2Tray</h1>
+
+<p align="center">
+  <img src="assets/app.png" alt="Cyclone2Tray app icon" title="Cyclone2Tray portable battery monitor" width="180">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version 0.1.0" title="Cyclone2Tray app version 0.1.0">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB" alt="Python 3.10+" title="Requires Python 3.10 or newer; tested with 3.15.2">
+  <img src="https://img.shields.io/badge/platform-Windows%2011-0078D4" alt="Windows 11" title="Validated on Windows 11">
+  <img src="https://img.shields.io/badge/controller-GameSir%20Cyclone%202-333333" alt="GameSir Cyclone 2" title="Designed for GameSir Cyclone 2 over its 2.4 GHz dongle">
+</p>
 
 An unofficial battery monitor for the **GameSir Cyclone 2**. It reads the controller battery through the **2.4 GHz USB dongle** and displays the percentage in the Windows notification area—no Bluetooth or GameSir Connect required.
 
@@ -10,9 +21,10 @@ An unofficial battery monitor for the **GameSir Cyclone 2**. It reads the contro
 - Indicates charging and disconnected states.
 - Sends low-battery notifications.
 - Rediscovers the controller and can start with Windows.
+- Offers English (default), Portuguese, and Spanish; the selection is saved.
 - Includes a command-line tool to inspect HID interfaces and reports.
 
-The supported setup is the **Cyclone 2 connected through its dongle in XInput mode**. Other controllers, connection modes, and operating systems have not been validated. This repository does not include a packaged `.exe`; it runs with Python.
+The supported setup is the **Cyclone 2 connected through its dongle in XInput mode**. Other controllers, connection modes, and operating systems have not been validated. The source runs with Python; the portable Windows package bundles its own Python runtime.
 
 ## How it works
 
@@ -34,7 +46,7 @@ This mapping was verified on Windows 11 with a Cyclone 2 running firmware 1.13 (
 
 - Windows 11.
 - GameSir Cyclone 2 and its 2.4 GHz dongle; controller on in XInput mode (green LED).
-- Python 3.10 or newer. Verified with Python 3.15.2.
+- Python 3.10 or newer to run from source or build the package. Verified with Python 3.15.2.
 - `vendor/hidapi.dll`, included in this repository.
 
 No .NET SDK or native extension compiler is required.
@@ -72,6 +84,19 @@ No .NET SDK or native extension compiler is required.
 
 Windows may place the icon in the hidden notification area. Click the `^` arrow next to the clock to find it.
 
+## Build Windows packages
+
+From the project root on Windows, install the runtime and build dependencies:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-build.txt
+.\build.bat
+```
+
+Place the EXE icon image at `assets\app.png`; the build converts it to a multi-size Windows icon automatically.
+
+The build produces `dist\Cyclone2Tray-portable.zip`. Extract it and run `Cyclone2Tray.exe`; keep the whole `Cyclone2Tray` folder together because it contains the Python runtime, `hidapi.dll`, and its license. No installation or administrator approval is required. The packaged app itself does not require Python or the .NET SDK.
+
 ## Privacy and data
 
 - The application does not send telemetry or make network requests.
@@ -82,12 +107,13 @@ Windows may place the icon in the hidden notification area. Click the `^` arrow 
 
 ## Tray menu
 
-Right-click the icon to see the current status and use these menu items:
+The interface defaults to English. Right-click the icon to see the battery status, connection details, and app version:
 
-- **Atualizar agora** (Refresh now): search for the device again.
-- **Alerta em** (Alert at): choose 10%, 15%, 20%, 25%, or 30% (default: 20%; critical alert: 10%).
-- **Iniciar com Windows** (Start with Windows): toggle startup for the current user.
-- **Sair** (Exit): stop the monitor.
+- **Refresh now**: search for the device again.
+- **Alert at**: choose 10%, 15%, 20%, 25%, or 30% (default: 20%; critical alert: 10%).
+- **Start with Windows**: toggle startup for the current user.
+- **Language**: choose English (default), Português, or Español; the selection is saved in settings.
+- **Exit**: stop the monitor.
 
 Alerts reset when charging starts or when the battery rises at least 5 percentage points above the alert threshold. Settings are stored in `%LOCALAPPDATA%\Cyclone2Tray\settings.json`. Existing settings under `%LOCALAPPDATA%\CycloneTray\settings.json` are read as a fallback. Startup uses the `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` registry key.
 
@@ -122,6 +148,7 @@ In `--watch` mode, byte 35 and byte 36 are printed when they change. If the cont
 - `probe.py`: diagnostic tool.
 - `vendor/hidapi.dll`: HID library for Windows.
 - `diagnostics.bat` and `start-monitor.bat`: diagnostic and launch shortcuts.
+- `build.bat`: Windows portable-package build script.
 
 ## Credits and references
 

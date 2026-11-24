@@ -5,6 +5,8 @@ import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+from .i18n import DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES
+
 APP_NAME = "Cyclone2Tray"
 LEGACY_APP_NAME = "CycloneTray"
 
@@ -16,6 +18,7 @@ class Settings:
     last_percent: int | None = None
     last_read_at: str | None = None
     device_path_hex: str | None = None
+    language: str = DEFAULT_LANGUAGE
 
     @property
     def device_path(self) -> bytes | None:
@@ -48,7 +51,11 @@ def load_settings() -> Settings:
     for path in (settings_path(), _legacy_settings_path()):
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
-            return Settings(**{k: v for k, v in data.items() if k in Settings.__annotations__})
+            values = {k: v for k, v in data.items() if k in Settings.__annotations__}
+            language = values.get("language")
+            if not isinstance(language, str) or language not in SUPPORTED_LANGUAGES:
+                values["language"] = DEFAULT_LANGUAGE
+            return Settings(**values)
         except (OSError, ValueError, TypeError):
             continue
     return Settings()
