@@ -79,6 +79,12 @@ def get_start_with_windows() -> bool:
         return False
 
 
+def _startup_command(executable: str, frozen: bool, script: Path) -> str:
+    if frozen:
+        return f'"{executable}"'
+    return f'"{executable}" "{script}"'
+
+
 def set_start_with_windows(enabled: bool) -> None:
     try:
         import winreg
@@ -88,7 +94,11 @@ def set_start_with_windows(enabled: bool) -> None:
                 import sys
 
                 script = Path(__file__).resolve().parents[1] / "run_tray.py"
-                command = f'"{sys.executable}" "{script}"'
+                command = _startup_command(
+                    sys.executable,
+                    getattr(sys, "frozen", False),
+                    script,
+                )
                 winreg.SetValueEx(key, APP_NAME, 0, winreg.REG_SZ, command)
             for name in (APP_NAME, LEGACY_APP_NAME):
                 try:
