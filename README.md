@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version 0.1.0" title="Cyclone2Tray app version 0.1.0">
+  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version 0.2.0" title="Cyclone2Tray app version 0.2.0">
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB" alt="Python 3.10+" title="Requires Python 3.10 or newer; tested with 3.15.2">
   <img src="https://img.shields.io/badge/platform-Windows%2011-0078D4" alt="Windows 11" title="Validated on Windows 11">
   <img src="https://img.shields.io/badge/controller-GameSir%20Cyclone%202-333333" alt="GameSir Cyclone 2" title="Designed for GameSir Cyclone 2 over its 2.4 GHz dongle">
@@ -17,7 +17,8 @@ An unofficial battery monitor for the **GameSir Cyclone 2**. It reads the contro
 
 ## Features
 
-- Shows battery percentage with a colored tray icon.
+- Shows battery percentage with a large, high-contrast number in two icon styles: filled battery or battery outline (only the number is colored).
+- Colors the icon (or only the number in outline style) by charge level (green, amber, red) and animates it while charging.
 - Indicates charging and disconnected states.
 - Sends low-battery notifications.
 - Rediscovers the controller and can start with Windows.
@@ -113,6 +114,7 @@ The interface defaults to English. Right-click the icon to see the battery statu
 - **Alert at**: choose 10%, 15%, 20%, 25%, or 30% (default: 20%; critical alert: 10%).
 - **Start with Windows**: toggle startup for the current user.
 - **Language**: choose English (default), Português, or Español; the selection is saved in settings.
+- **Icon style**: choose **Battery icon** (filled with the charge color) or **Empty battery** (outline only, charge color on the number); the selection is saved in settings.
 - **Exit**: stop the monitor.
 
 Alerts reset when charging starts or when the battery rises at least 5 percentage points above the alert threshold. Settings are stored in `%LOCALAPPDATA%\Cyclone2Tray\settings.json`. Existing settings under `%LOCALAPPDATA%\CycloneTray\settings.json` are read as a fallback. Startup uses the `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` registry key.
@@ -156,7 +158,7 @@ In `--watch` mode, byte 35 and byte 36 are printed when they change. If the cont
 - [bpbp-boop/GameSirBattery](https://github.com/bpbp-boop/GameSirBattery) — UX reference for the tray icon, alerts, settings, and Windows startup. That project reads the Cyclone Pro (T4cp) over BLE; its protocol is **not** used to read the Cyclone 2 here.
 - [pyhidapi (`hid`)](https://github.com/apmorton/pyhidapi) and [hidapi](https://github.com/libusb/hidapi) — Python HID access and the Windows DLL. The included DLL is version 0.15.0; see `vendor/HIDAPI-LICENSE.txt` and the [upstream project](https://github.com/libusb/hidapi).
 - [pystray](https://github.com/moses-palmer/pystray) — tray icon and menu.
-- [Pillow](https://python-pillow.org/) — icon drawing. Its visual style references Material Symbols Rounded; no external glyph or font file is distributed.
+- [Pillow](https://python-pillow.org/) — icon drawing. Its battery shape references Material Symbols Rounded; bold text uses Segoe UI Bold when available. No external font file is distributed.
 
 <details>
 <summary>MIT notice for the adapted gamesir-linux-tools code</summary>

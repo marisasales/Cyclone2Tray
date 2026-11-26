@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Versão 0.1.0" title="Versão do Cyclone2Tray: 0.1.0">
+  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Versão 0.2.0" title="Versão do Cyclone2Tray: 0.2.0">
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB" alt="Python 3.10+" title="Requer Python 3.10 ou mais recente; testado com 3.15.2">
   <img src="https://img.shields.io/badge/platform-Windows%2011-0078D4" alt="Windows 11" title="Validado no Windows 11">
   <img src="https://img.shields.io/badge/controller-GameSir%20Cyclone%202-333333" alt="GameSir Cyclone 2" title="Projetado para o GameSir Cyclone 2 pelo dongle 2,4 GHz">
@@ -17,7 +17,8 @@ Monitor não oficial da bateria do **GameSir Cyclone 2** na área de notificaç�
 
 ## O que o programa faz
 
-- Mostra a porcentagem da bateria em um ícone colorido na bandeja.
+- Mostra a porcentagem da bateria com número grande e alto contraste em dois estilos de ícone: bateria preenchida ou bateria sem preencher (só o número recebe a cor).
+- Colore o ícone (ou apenas o número, no estilo sem preenchimento) conforme o nível (verde, âmbar, vermelho) e anima o ícone durante o carregamento.
 - Indica quando o controle está carregando e quando está desconectado.
 - Avisa quando a bateria chega ao limite configurado.
 - Redescobre o controle quando necessário e pode iniciar com o Windows.
@@ -113,6 +114,7 @@ O idioma padrão da interface é inglês. Clique com o botão direito no ícone 
 - **Alert at / Alerta em**: escolher 10%, 15%, 20%, 25% ou 30% (padrão: 20%; alerta crítico: 10%).
 - **Start with Windows / Iniciar com Windows**: habilitar ou desabilitar a inicialização automática do usuário atual.
 - **Language / Idioma**: escolher English (padrão), Português ou Español; a escolha fica salva nas configurações.
+- **Icon style / Estilo do ícone**: escolher **Ícone de bateria** (preenchido com a cor da carga) ou **Bateria sem preencher** (apenas o contorno, com a cor da carga no número); a escolha fica salva nas configurações.
 - **Exit / Sair**: encerrar o monitor.
 
 Os alertas são reiniciados quando o controle começa a carregar ou quando a carga sobe pelo menos 5 pontos acima do limite. As configurações ficam em `%LOCALAPPDATA%\Cyclone2Tray\settings.json`; configurações antigas em `%LOCALAPPDATA%\CycloneTray\settings.json` são lidas como fallback. A inicialização automática usa a chave `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
@@ -156,7 +158,7 @@ Em `--watch`, os bytes 35 e 36 são impressos em inglês quando mudam. Se o cont
 - [bpbp-boop/GameSirBattery](https://github.com/bpbp-boop/GameSirBattery) — referência de experiência de uso para ícone, alertas, configurações e inicialização com o Windows. O protocolo daquele projeto é BLE para o Cyclone Pro (T4cp); **não** é usado para ler o Cyclone 2 neste aplicativo.
 - [pyhidapi (`hid`)](https://github.com/apmorton/pyhidapi) e [hidapi](https://github.com/libusb/hidapi) — acesso HID em Python e DLL para Windows. A DLL incluída é a versão 0.15.0; consulte `vendor/HIDAPI-LICENSE.txt` e o [projeto original](https://github.com/libusb/hidapi).
 - [pystray](https://github.com/moses-palmer/pystray) — ícone e menu na bandeja do Windows.
-- [Pillow](https://python-pillow.org/) — desenho do ícone. O visual toma Material Symbols Rounded como referência; nenhum glifo ou arquivo de fonte externo é distribuído.
+- [Pillow](https://python-pillow.org/) — desenho do ícone. O formato da bateria toma Material Symbols Rounded como referência; o texto em negrito usa Segoe UI Bold quando disponível. Nenhum arquivo de fonte externo é distribuído.
 
 <details>
 <summary>Aviso MIT do trecho adaptado de gamesir-linux-tools</summary>
