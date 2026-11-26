@@ -10,6 +10,10 @@ from .i18n import DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES
 APP_NAME = "Cyclone2Tray"
 LEGACY_APP_NAME = "CycloneTray"
 
+ICON_STYLES = ("battery", "outline")
+DEFAULT_ICON_STYLE = "battery"
+LEGACY_ICON_STYLES = {"percent": "outline"}
+
 
 @dataclass
 class Settings:
@@ -19,6 +23,7 @@ class Settings:
     last_read_at: str | None = None
     device_path_hex: str | None = None
     language: str = DEFAULT_LANGUAGE
+    icon_style: str = DEFAULT_ICON_STYLE
 
     @property
     def device_path(self) -> bytes | None:
@@ -55,6 +60,13 @@ def load_settings() -> Settings:
             language = values.get("language")
             if not isinstance(language, str) or language not in SUPPORTED_LANGUAGES:
                 values["language"] = DEFAULT_LANGUAGE
+            icon_style = values.get("icon_style")
+            if isinstance(icon_style, str):
+                icon_style = LEGACY_ICON_STYLES.get(icon_style, icon_style)
+            if not isinstance(icon_style, str) or icon_style not in ICON_STYLES:
+                values["icon_style"] = DEFAULT_ICON_STYLE
+            else:
+                values["icon_style"] = icon_style
             return Settings(**values)
         except (OSError, ValueError, TypeError):
             continue

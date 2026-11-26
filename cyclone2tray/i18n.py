@@ -29,6 +29,9 @@ _TRANSLATIONS = {
         "alert_at": "Alert at",
         "startup": "Start with Windows",
         "language": "Language",
+        "icon_style": "Icon style",
+        "icon_battery": "Battery icon",
+        "icon_outline": "Empty battery",
         "exit": "Exit",
     },
     "pt-BR": {
@@ -51,6 +54,9 @@ _TRANSLATIONS = {
         "alert_at": "Alerta em",
         "startup": "Iniciar com Windows",
         "language": "Idioma",
+        "icon_style": "Estilo do ícone",
+        "icon_battery": "Ícone de bateria",
+        "icon_outline": "Bateria sem preencher",
         "exit": "Sair",
     },
     "es": {
@@ -73,6 +79,9 @@ _TRANSLATIONS = {
         "alert_at": "Avisar al",
         "startup": "Iniciar con Windows",
         "language": "Idioma",
+        "icon_style": "Estilo del icono",
+        "icon_battery": "Icono de batería",
+        "icon_outline": "Batería sin rellenar",
         "exit": "Salir",
     },
 }
